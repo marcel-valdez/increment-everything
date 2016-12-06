@@ -1,0 +1,28 @@
+{
+  "name": "increment-everything-front-end",
+  "version": "1.0.0",
+  "description": "Web front-end for the increment-everything project",
+  "main": "src/index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "\"TODO: Add test command\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/marcel-valdez/increment-everything.git"
+  },
+  "keywords": [
+    "web",
+    "front-end",
+    "incremental",
+    "rewarding"
+  ],
+  "author": "marcel.valdez@live.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/marcel-valdez/increment-everything/issues"
+  },
+  "homepage": "https://github.com/marcel-valdez/increment-everything#readme"
+}
