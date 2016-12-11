@@ -14,7 +14,7 @@ fs.readdirSync('node_modules')
 module.exports = {
   entry: [
     'babel-polyfill',
-    path.resolve(__dirname, 'server/lib/server.js'),
+    path.resolve(__dirname, 'server/lib/entry.js'),
   ],
   output: {
     path: path.join(__dirname, 'build'),
