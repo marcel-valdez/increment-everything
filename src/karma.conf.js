@@ -4,7 +4,16 @@ module.exports = function(config) {
     browsers: ['Chrome'],
     frameworks: ['mocha'],
     files: [
-      'client/test/*test.js'
-    ]
+      { pattern: 'client/test/*test.js' },
+      { pattern: 'client/test/**/*test.js' }
+    ],
+    preprocessors: {
+      'test/*test.js': ['webpack'],
+      'test/**/*test.js': ['webpack']
+    },
+    webpack: {},
+    webpackMiddleware: {
+      stats: 'errors-only'
+    }
   })
 }

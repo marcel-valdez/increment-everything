@@ -1,13 +1,9 @@
-var request = require('supertest');
-var createServer = require('../src/server.js');
+const request = require('supertest');
+const createServer = require('../lib/server.js');
 describe('loading express', function () {
   var server;
-  beforeEach(function () {
-    server = createServer();
-  });
-  afterEach(function (done) {
-    server.close(done);
-  });
+  beforeEach(() => server = createServer());
+  afterEach(done => server.close(done));
   it('responds to /increments', function testIncrements(done) {
     request(server).put('/increments').expect(200, done);
   });
