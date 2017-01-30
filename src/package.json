@@ -8,16 +8,25 @@
     "test-server": "server/test"
   },
   "scripts": {
-    "test": "npm run test-server && npm run test-client",
+    "test": "npm run test-server-common && npm run test-server && npm run test-client",
     "test-client": "karma start --single-run",
+    "build-client": "webpack --config client.webpack.config.js",
+    "prestart-client": "npm run build-client",
+    "start-client": "webpack-dev-server --content-base build/client/",
     "test-client:watch": "karma start",
-    "test-server": "mocha-webpack --webpack-config server.webpack.config.js server/test",
-    "test-server:watch": "mocha-webpack --watch --webpack-config server.webpack.config.js server/test",
+    "build-client:watch": "webpack --watch --config client.webpack.config.js",
+    "prestart-client:watch": "npm run build-client:watch &",
+    "start-client:watch": "webpack-dev-server --hot --content-base build/client/",
+    "build-client:prod": "webpack -p --config client.webpack.config.js",
+    "test-server": "mocha-webpack --webpack-config server.webpack.config.js --glob '*test.js' --recursive server/test",
+    "test-server:watch": "mocha-webpack --watch --webpack-config server.webpack.config.js --glob '*test.js' --recursive server/test",
     "build-server": "webpack --config server.webpack.config.js",
     "build-server:watch": "webpack --watch --config server.webpack.config.js",
     "prestart-server": "npm run build-server",
-    "start-server": "node build/server.bundle.js",
-    "start-server:watch": "echo TODO: Use nodemon to restart the server automatically"
+    "start-server": "node build/server/bundle.js",
+    "start-server:watch": "echo TODO: Use nodemon to restart the server automatically",
+    "test-server-common": "mocha-webpack --webpack-config server.webpack.config.js --glob '*test.js' --recursive common/test",
+    "test-server-common:watch": "mocha-webpack --watch --webpack-config server.webpack.config.js --glob '*test.js' --recursive common/test"
   },
   "repository": {
     "type": "git",
@@ -39,7 +48,10 @@
   "dependencies": {
     "babel-polyfill": "^6.20.0",
     "babel-runtime": "^6.20.0",
-    "express": "^4.14.0"
+    "express": "^4.14.0",
+    "react": "^15.4.2",
+    "react-addons-test-utils": "^15.4.2",
+    "react-dom": "^15.4.2"
   },
   "devDependencies": {
     "babel-cli": "^6.18.0",
@@ -47,15 +59,22 @@
     "babel-loader": "^6.2.9",
     "babel-plugin-transform-runtime": "^6.15.0",
     "babel-preset-es2015": "^6.18.0",
+    "babel-preset-react": "^6.16.0",
     "chai": "^3.5.0",
+    "enzyme": "^2.7.0",
+    "html-webpack-plugin": "^2.24.1",
     "karma": "^1.3.0",
+    "karma-chai": "^0.1.0",
     "karma-chrome-launcher": "^2.0.0",
     "karma-mocha": "^1.3.0",
+    "karma-sourcemap-loader": "^0.3.7",
     "karma-webpack": "^1.8.0",
     "mocha": "^3.2.0",
     "mocha-loader": "^1.0.0",
     "mocha-webpack": "^0.7.0",
+    "react-addons": "^0.9.1-deprecated",
     "supertest": "^2.0.1",
-    "webpack": "^1.13.3"
+    "webpack": "^1.13.3",
+    "webpack-dev-server": "^1.16.2"
   }
 }
