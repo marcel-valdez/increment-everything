@@ -1,29 +1,46 @@
-const express = require('express');
-const mongo = require('mongodb');
-const monk = require('monk');
+import express from 'express';
+import mongo from 'mongodb';
+import monk from 'monk';
+import { toFormattedString } from 'common/lib/utilities.js';
 
 module.exports = function (config = {
   db: {
+    // TODO: database configuration should come from a webpack option
     connection: 'localhost:27017/increments-db'
   },
   server: {
+    // TODO: port configuration should come from a webpack option
     port: 3000
   }
 }) {
+
   const app = express();
   const db = monk(config.db.connection);
   const increments = db.get('increments');
 
+  // serve the built resources
+  // TODO(prod): Serve static resources from production publish directory
+  app.use(express.static('build/client'));
+
   app.put('/increments', (req, res) => {
-    increments.insert({
-      "description": req.query.description
-    }).then(
-      doc => {
-        res.status(200).send("Added new increment: " + doc.toString());
-      },
-      err => {
-        res.status(500).send("Failed to add the new increment: " + err);
-      });
+    let json = '';
+    req.on('data', payloadChunk => json += payloadChunk);
+
+    req.on('end', () => {
+      const increment = JSON.parse(json);
+      if (!increment.description) {
+        res.status(500).send("Description cannot be empty");
+        return;
+      }
+
+      increments.insert(increment).then(
+        doc => {
+          res.status(200).send("Added new increment: " + doc.toString());
+        },
+        err => {
+          res.status(500).send("Failed to add the new increment: " + err);
+        });
+    });
   });
 
   app.delete('/increments/:id', (req, res) => {

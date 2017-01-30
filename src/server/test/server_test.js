@@ -1,8 +1,8 @@
-const request = require('supertest');
-const createServer = require('../lib/server.js');
-const mongo = require('mongodb');
-const monk = require('monk');
-const chai = require('chai');
+import request from 'supertest';
+import createServer from 'server/lib/server.js';
+import mongo from 'mongodb';
+import monk from 'monk';
+import chai from 'chai';
 const assert = chai.assert;
 
 const doAsync = function(assertion, done) {
@@ -34,9 +34,20 @@ describe('test server', function () {
     });
   });
 
-  it('responds to /increments', function testPutIncrements(done) {
-    request(server).put('/increments?description=test').expect(200, done);
+  it('can put an increment', function testPutIncrements(done) {
+    request(server).put('/increments')
+      .send({ description: 'test' })
+      .expect(200, done);
   });
+
+  it('can fail to put an increment without description',
+     function testFailIncrementWithoutDescription(done) {
+       request(server).put('/increments')
+         .send({})
+         .expect(res => assert.isOk(res.error))
+         .expect(res => assert.include(res.text, 'Description cannot be empty'))
+         .expect(500, done);
+     });
 
   it('can delete an existing increment', function testDeleteIncrements(done) {
     const id = monk.id();
