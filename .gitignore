@@ -2,6 +2,7 @@
 src/node_modules
 *.log
 src/.tmp/*
-#*#
-.#*
 src/build
+*#
+#*
+.#*
