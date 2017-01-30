@@ -17,8 +17,13 @@ module.exports = {
     path.resolve(__dirname, 'server/lib/entry.js'),
   ],
   output: {
-    path: path.join(__dirname, 'build'),
-    filename: "server.bundle.js"
+    path: path.join(__dirname, 'build/server'),
+    filename: "bundle.js"
+  },
+  resolve: {
+    root: [
+      path.resolve(__dirname, '.')
+    ]
   },
   externals: nodeModules,
   target: 'node',
@@ -38,12 +43,14 @@ module.exports = {
           /* don't use babel on node_modules and whatnot  */
           path.resolve(__dirname, "server/lib"),
           path.resolve(__dirname, "server/test"),
+          path.resolve(__dirname, "common/lib"),
+          path.resolve(__dirname, "common/test"),
         ],
         test: /\.js$/,
         query: {
           plugins: ['transform-runtime'],
           // presets for babel can be defined here or in .babelrc
-          presets: ['es2015'/*, 'stage-0' (es-2017), 'react' */]
+          presets: ['es2015'/*, 'stage-0' (es-2017) */]
         }
       }
     ]
