@@ -9,7 +9,6 @@ function makeIncrementService() {
   return {
     state: [],
     addIncrement: function(inc) {
-      console.log(`makeIncrementService.addIncrement: ${inc}`);
       this.state.push(inc);
     }
   };
