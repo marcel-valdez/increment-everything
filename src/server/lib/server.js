@@ -1,7 +1,6 @@
 import express from 'express';
 import mongo from 'mongodb';
 import monk from 'monk';
-import { toFormattedString } from 'common/lib/utilities.js';
 
 module.exports = function (config = {
   db: {
