@@ -3,6 +3,7 @@ var webpack = require('webpack');
 var fs = require('fs');
 
 var HtmlPlugin = require('html-webpack-plugin');
+var NODE_ENV = JSON.stringify('dev');
 
 module.exports = {
   entry: [
@@ -26,6 +27,10 @@ module.exports = {
     ]
   },
   target: 'web',
+  context: __dirname,
+  node: {
+    __filename: true
+  },
   debug: true,
   devtool: 'inline-source-map',
   plugins: [
@@ -34,6 +39,9 @@ module.exports = {
       template: path.resolve(__dirname, 'client/index.html'),
       filename: 'index.html',
       inject: 'body'
+    }),
+    new webpack.DefinePlugin({
+      'process.env.NODE_ENV': NODE_ENV
     })
   ],
   module: {

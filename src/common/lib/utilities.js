@@ -33,7 +33,14 @@ function logFormattedObject(obj, depth = 1000) {
   console.log(toFormattedString(obj, depth));
 }
 
+function logDebug(msg, obj, depth = 5) {
+  if(process.env.NODE_ENV === 'dev') {
+    console.log(`${msg} ${toFormattedString(obj, depth = 5)}`);
+  }
+}
+
 module.exports = {
   logFormattedObject,
-  toFormattedString
+  toFormattedString,
+  logDebug
 };
