@@ -35,14 +35,14 @@ describe('test server', function () {
   });
 
   it('can put an increment', function testPutIncrements(done) {
-    request(server).put('/increments')
+    request(server).post('/increments')
       .send({ description: 'test' })
       .expect(200, done);
   });
 
   it('can fail to put an increment without description',
      function testFailIncrementWithoutDescription(done) {
-       request(server).put('/increments')
+       request(server).post('/increments')
          .send({})
          .expect(res => assert.isOk(res.error))
          .expect(res => assert.include(res.text, 'Description cannot be empty'))
@@ -54,7 +54,7 @@ describe('test server', function () {
     increments.insert({ "_id": id.toString() })
       .then(doc => {
         request(server).delete('/increments/' + id.toString())
-          .expect(200)
+          .expect(200, done)
           .end(res => {
             increments.findOne(id)
               .then(doc => doAsync(() => assert.isNotOk(doc), done));
@@ -72,6 +72,19 @@ describe('test server', function () {
           })
           .expect(200, doc, done);
       });
+  });
+
+
+  it('can post an update to an increment', function postIncrementUpdate(done) {
+    increments.insert({ 'escription' : 'should be updated' })
+      .then(doc => request(server).put('/increments/' + doc['_id'])
+            .send({ 'description': 'was updated' })
+            .expect(200, done)
+            .end(res => increments.findOne({ '_id': doc['_id'] })
+                 .then(nuDoc =>
+                       doAsync(() =>
+                               assert.equal(nuDoc.description, 'was updated'),
+                               done))))
   });
 
   it('can get all increments', function getAllIncrements(done) {

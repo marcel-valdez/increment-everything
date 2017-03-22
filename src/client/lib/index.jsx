@@ -30,7 +30,7 @@ function renderIncrements(increments, incrementService) {
 const incrementService = {
   addIncrement(increment) {
     logDebug(`${__filename}: incrementService: `, increment, 2);
-    axios.put(incrementsUrl, increment)
+    axios.post(incrementsUrl, increment)
       .then(_ => this.fetchIncrements(), res => renderError(res.error));
   },
   fetchIncrements() {

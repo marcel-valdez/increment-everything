@@ -21,36 +21,67 @@ module.exports = function (config = {
   // TODO(prod): Serve static resources from production publish directory
   app.use(express.static('build/client'));
 
-  app.put('/increments', (req, res) => {
-    let json = '';
-    req.on('data', payloadChunk => json += payloadChunk);
+  function parseJsonPayload(req) {
+    return new Promise((onSuccess, onError) => {
+      let jsonStr = '';
+      req.on('data', payloadChunk => jsonStr += payloadChunk);
+      req.on('end', () => {
+        let jsonObj = null;
+        try {
+          jsonObj = JSON.parse(jsonStr)
+        } catch(ex) {
+          return onError(ex);
+        }
 
-    req.on('end', () => {
-      const increment = JSON.parse(json);
-      if (!increment.description) {
-        res.status(500).send("Description cannot be empty");
-        return;
-      }
-
-      increments.insert(increment).then(
-        doc => {
-          res.status(200).send("Added new increment: " + doc.toString());
-        },
-        err => {
-          res.status(500).send("Failed to add the new increment: " + err);
-        });
+        return onSuccess(jsonObj);
+      });
     });
+  }
+
+  app.post('/increments', (req, res) => {
+    parseJsonPayload(req)
+      .then(increment => {
+        if (!increment.description) {
+          res.status(500).send("Description cannot be empty");
+          return;
+        }
+
+        increments.insert(increment).then(
+          doc => {
+            res.status(200).send("Added new increment: " + doc.toString());
+          },
+          err => {
+            res.status(500).send("Failed to add the new increment: " + err);
+          });
+      },
+      err => res.status(500).send("Failed to parse JSON payload: " + err))
+  });
+
+  app.put('/increments/:id', (req, res) => {
+    const incrementId = req.params.id;
+    parseJsonPayload(req)
+      .then(increment => increments.update({ '_id': incrementId }, increment)
+            .then(doc =>
+                  res.status(200).send("Updated increment: " + doc.toString()),
+                  err => {
+                    const msg =
+                          "Failed to update increment with id: " + incrementId;
+                    console.error(msg);
+                    res.status(500).send(msg);
+                  }));
   });
 
   app.delete('/increments/:id', (req, res) => {
-    const objId = monk.id(req.params.id);
+    const  incrementId = req.params.id;
+    const objId = monk.id(incrementId);
     increments.remove(objId).then(
       doc => {
         res.status(200).send("Removed increment: " + doc.toString());
       },
       err => {
-        console.error("Failed to remove increment with id: " + req.params.id);
-        res.status(500).send("Failed to remove increment with id: " + req.params.id);
+        const msg = "Failed to remove increment with id: " + incrementId;
+        console.error(msg);
+        res.status(500).send(msg);
       });
   });
 
